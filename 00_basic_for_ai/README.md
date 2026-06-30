@@ -1,8 +1,8 @@
 # AI System Literacy Report
 
-> AI 회사에서 일하는 비전공자가 AI 시스템을 이해하기 위해 정리한 기술·통계·수학 문해력 학습 보고서입니다.
+> AI 회사에서 일하는 비전공자가 AI 시스템을 이해하기 위해 정리한 기술·Python·통계·수학 문해력 학습 보고서입니다.
 
-AI 제품을 이해하려면 모델이 실행되는 **컴퓨터 시스템**, 모델 성능을 판단하는 **통계적 기준**, 내부 계산을 읽는 **기초 수학**을 함께 알아야 합니다. 이 저장소는 엄밀한 증명이나 구현 튜토리얼보다, 기술 회의에서 구조·숫자·계산 흐름을 올바르게 해석하고 질문하는 능력에 초점을 둡니다.
+AI 제품을 이해하려면 모델이 실행되는 **컴퓨터 시스템**, 데이터를 다루는 **Python 기초**, 모델 성능을 판단하는 **통계적 기준**, 내부 계산을 읽는 **기초 수학**을 함께 알아야 합니다. 이 저장소는 기술 회의에서 구조·코드·숫자·계산 흐름을 올바르게 해석하고 질문하는 능력에 초점을 둡니다.
 
 ## Learning Tracks
 
@@ -19,7 +19,17 @@ AI 서비스가 실제로 실행되는 기반을 다룹니다.
 
 [Computer Systems Track 바로가기](./docs/01.%20computer-systems/README.md)
 
-### 2. Statistics for AI Literacy
+### 2. Python Basic
+
+AI 학습과 데이터 처리를 위한 Python 기초 실습입니다.
+
+- Google Colab 기반 실습
+- 브라우저에서 바로 실행 가능한 notebook
+- Python 문법과 데이터 처리 학습 기록
+
+[Python Basic Track 바로가기](./docs/02.%20python-basic/README.md)
+
+### 3. Statistics for AI Literacy
 
 AI 모델의 결과를 해석하고 평가하는 기준을 다룹니다.
 
@@ -33,7 +43,7 @@ AI 모델의 결과를 해석하고 평가하는 기준을 다룹니다.
 
 [Statistics for AI Track 바로가기](./docs/03.%20statistics-for-ai/README.md)
 
-### 3. Math for AI Literacy
+### 4. Math for AI Literacy
 
 AI 모델 내부의 계산 흐름을 읽기 위한 수학적 직관을 다룹니다.
 
@@ -67,11 +77,12 @@ AI 모델 내부의 계산 흐름을 읽기 위한 수학적 직관을 다룹니
     └── math-for-ai.md
 ```
 
-## How the Two Tracks Connect
+## How the Tracks Connect
 
 | 질문 | 필요한 문해력 |
 |---|---|
 | 요청이 왜 느린가? | 서버 경로, 자원 병목, latency, observability |
+| 데이터를 직접 확인하고 실험하려면? | Python 문법, notebook 실행, 데이터 처리 |
 | 모델 확률 0.8을 믿을 수 있는가? | calibration, prevalence, external validation |
 | 운영에서 양성 알림이 너무 많은 이유는? | threshold, PPV, base rate, queue capacity |
 | 다른 병원에서 성능이 떨어진 이유는? | data distribution shift, leakage, subgroup validation |
@@ -88,4 +99,4 @@ AI 모델 내부의 계산 흐름을 읽기 위한 수학적 직관을 다룹니
 
 ## Key Takeaway
 
-AI 시스템을 이해한다는 것은 모델 하나를 아는 것이 아닙니다. 모델이 어떤 컴퓨터와 서비스 구조 위에서 실행되는지, 어떤 수학적 계산으로 입력을 변환하는지, 성능 숫자가 어떤 데이터와 평가 조건에서 만들어졌는지 함께 이해하는 일입니다.
+AI 시스템을 이해한다는 것은 모델 하나를 아는 것이 아닙니다. 모델이 어떤 컴퓨터와 서비스 구조 위에서 실행되는지, Python으로 데이터를 어떻게 다루는지, 어떤 수학적 계산으로 입력을 변환하는지, 성능 숫자가 어떤 평가 조건에서 만들어졌는지 함께 이해하는 일입니다.

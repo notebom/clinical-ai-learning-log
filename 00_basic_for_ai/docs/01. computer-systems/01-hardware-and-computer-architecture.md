@@ -222,4 +222,414 @@ AI 성능은 GPU 계산 능력뿐 아니라 CPU의 데이터 준비, RAM과 VRAM
 
 ---
 
+---
+
+## 03. Weight, Activation, and Batch
+
+아주 핵심적인 질문입니다. weight, activation, batch는 AI 모델이 실제로 계산될 때 항상 함께 등장합니다.
+
+간단히 먼저 말하면:
+
+Weight = 학습된 모델 안에 저장된 고정된 숫자
+Activation = 입력 데이터가 모델을 통과하면서 매번 새로 계산되는 중간 결과
+Batch = 여러 입력 데이터를 한 번에 묶어서 처리하는 단위
+
+
+---
+
+
+### 1. Weight란 무엇인가?
+
+Weight는 모델이 학습을 통해 얻은 숫자입니다.
+
+예를 들어 아주 단순한 모델이 있다고 해보겠습니다.
+
+y = wx + b
+
+여기서:
+
+| 기호 | 의미 |
+|---|---|
+| x | 입력값 |
+| w | weight |
+| b | bias |
+| y | 출력값 |
+
+w와 b는 모델이 학습하면서 조정한 값입니다.
+
+예를 들어 질병 위험도를 예측하는 모델이 있다고 하면:
+
+위험 점수 = 0.8 × 나이 + 1.5 × 혈당 - 2.0
+
+여기서:
+
+0.8 = 나이에 대한 weight
+1.5 = 혈당에 대한 weight
+-2.0 = bias
+
+입니다.
+
+즉, weight는 모델이 “이 입력을 얼마나 중요하게 볼 것인가”를 나타내는 숫자입니다.
+
+
+---
+
+
+### 2. 학습된 모델의 weight는 저장된다
+
+모델 학습이 끝나면 weight는 파일로 저장됩니다.
+
+예를 들어:
+
+model.pt
+model.safetensors
+model.bin
+checkpoint.pth
+
+같은 파일 안에는 모델 구조 자체보다도, 학습된 weight들이 많이 들어 있습니다.
+
+모델을 불러온다는 것은 보통 다음을 의미합니다.
+
+모델 구조를 만들고
+그 안에 학습된 weight 값을 채워 넣는다
+
+즉, 학습된 모델은 “학습된 weight 집합”이라고 봐도 됩니다.
+
+
+---
+
+
+### 3. Activation이란 무엇인가?
+
+Activation은 입력 데이터가 모델을 통과하면서 각 layer에서 계산되는 중간 결과입니다.
+
+예를 들어 모델이 다음 구조라고 해봅시다.
+
+입력 → Layer 1 → Layer 2 → Layer 3 → 출력
+
+입력 데이터가 Layer 1을 통과하면 어떤 숫자 묶음이 나옵니다.
+이 결과가 Layer 1의 activation입니다.
+
+그 activation이 다시 Layer 2의 입력이 됩니다.
+Layer 2를 통과한 결과는 Layer 2의 activation입니다.
+
+즉:
+
+Activation = 각 layer가 입력을 받아 계산한 출력값
+
+입니다.
+
+
+---
+
+
+### 4. Weight와 activation의 차이
+
+둘은 모두 숫자이지만 성격이 완전히 다릅니다.
+
+| 구분 | Weight | Activation |
+|---|---|---|
+| 의미 | 모델이 학습한 파라미터 | 입력이 지나가며 생기는 중간 계산값 |
+| 언제 생김 | 학습 과정에서 만들어지고 저장됨 | 추론/학습 시 매 입력마다 계산됨 |
+| 입력에 따라 변함? | 일반적으로 고정 | 입력 데이터마다 달라짐 |
+| 저장 여부 | 모델 파일에 저장 | 보통 일시적으로 메모리에 존재 |
+| 비유 | 요리사의 레시피 | 실제 요리 중간 결과물 |
+| 예시 | weight matrix | hidden state, feature map |
+
+중요한 차이는 이것입니다.
+
+Weight는 모델 안에 저장된 값이고,
+Activation은 데이터가 모델을 통과할 때 생기는 값입니다.
+
+
+---
+
+
+### 5. Batch란 무엇인가?
+
+Batch는 여러 개의 입력 데이터를 한 번에 묶어서 처리하는 단위입니다.
+
+예를 들어 이미지를 하나씩 처리할 수도 있습니다.
+
+이미지 1개 → 모델 → 결과 1개
+
+하지만 실제 AI 학습이나 추론에서는 보통 여러 개를 묶어서 처리합니다.
+
+이미지 32개 → 모델 → 결과 32개
+
+이때 32개가 batch size입니다.
+
+batch size = 한 번에 모델에 넣는 데이터 개수
+
+
+---
+
+
+### 6. 왜 batch를 쓰는가?
+
+batch를 쓰는 이유는 GPU가 여러 데이터를 한꺼번에 계산하는 데 강하기 때문입니다.
+
+GPU는 단순 계산을 병렬로 많이 처리하는 장치입니다.
+데이터를 하나씩 넣는 것보다 여러 개를 묶어서 넣으면 GPU 자원을 더 효율적으로 사용할 수 있습니다.
+
+비유하면:
+
+한 명씩 계산시키기 = 계산대 하나에 손님 한 명씩 보내기
+batch 처리 = 손님 여러 명의 주문을 한 번에 처리하기
+
+입니다.
+
+
+---
+
+
+### 7. Batch와 activation의 관계
+
+batch가 커지면 activation도 그만큼 커집니다.
+
+예를 들어 한 이미지가 layer를 통과했을 때 activation 크기가 다음과 같다고 해봅시다.
+
+[768]
+
+즉, 숫자 768개짜리 벡터입니다.
+
+batch size가 1이면 activation shape은:
+
+[1, 768]
+
+batch size가 32이면 activation shape은:
+
+[32, 768]
+
+입니다.
+
+즉:
+
+batch size가 커질수록 한 번에 저장해야 하는 activation 양도 커진다.
+
+그래서 batch size를 키우면 GPU를 효율적으로 쓸 수 있지만, VRAM 사용량도 증가합니다.
+
+
+---
+
+
+### 8. Weight와 batch의 관계
+
+weight는 batch size가 바뀌어도 보통 그대로입니다.
+
+예를 들어 어떤 layer의 weight shape이 다음과 같다고 해봅시다.
+
+Weight shape = [768, 3072]
+
+batch size가 1이면 입력 shape은:
+
+Input activation = [1, 768]
+
+계산 결과는:
+
+[1, 768] × [768, 3072] = [1, 3072]
+
+batch size가 32이면:
+
+Input activation = [32, 768]
+
+계산 결과는:
+
+[32, 768] × [768, 3072] = [32, 3072]
+
+여기서 중요한 점은:
+
+weight [768, 3072]는 그대로이고,
+batch 차원만 1에서 32로 늘어난다.
+
+즉, batch는 “한 번에 몇 개의 입력을 처리할지”를 정하지만, weight 자체를 바꾸지는 않습니다.
+
+
+---
+
+
+### 9. 세 개의 관계를 한 번에 보기
+
+한 layer의 계산을 보면 관계가 가장 명확합니다.
+
+Input Activation × Weight + Bias = Output Activation
+
+예를 들어:
+
+[batch_size, input_dim] × [input_dim, output_dim] + [output_dim]
+= [batch_size, output_dim]
+
+구체적으로:
+
+[32, 768] × [768, 3072] + [3072]
+= [32, 3072]
+
+여기서:
+
+| 요소 | 의미 |
+|---|---|
+| [32, 768] | batch 32개에 대한 입력 activation |
+| [768, 3072] | 학습된 weight |
+| [3072] | 학습된 bias |
+| [32, 3072] | 출력 activation |
+
+즉, 한 layer에서 일어나는 일은 다음과 같습니다.
+
+batch에 포함된 여러 입력의 activation이
+같은 weight를 공유해서 통과하고
+그 결과 새로운 activation이 만들어진다.
+
+
+---
+
+
+### 10. 학습 때와 추론 때의 차이
+
+#### 추론 Inference
+
+추론에서는 weight가 고정되어 있습니다.
+
+고정된 weight + 새 입력 데이터 → activation 계산 → 예측 결과
+
+예를 들어 학습이 끝난 질병 예측 모델에 새 환자 데이터를 넣으면, 모델은 저장된 weight를 사용해 activation을 계산하고 결과를 냅니다.
+
+이때 weight는 바뀌지 않습니다.
+
+#### 학습 Training
+
+학습에서는 weight가 계속 바뀝니다.
+
+흐름은 다음과 같습니다.
+
+입력 batch
+→ activation 계산
+→ 예측
+→ loss 계산
+→ gradient 계산
+→ weight 업데이트
+
+즉, 학습 중에는 activation도 계산되고, 그 activation을 바탕으로 loss와 gradient가 계산되며, 최종적으로 weight가 조금씩 수정됩니다.
+
+
+---
+
+
+### 11. 학습 중 activation이 중요한 이유
+
+학습할 때는 activation을 단순히 계산하고 버리는 것이 아닙니다.
+
+역전파, 즉 backpropagation을 위해 중간 activation들을 기억해야 합니다.
+
+왜냐하면 모델이 weight를 어떻게 수정해야 하는지 계산하려면, 각 layer에서 어떤 값이 나왔는지를 알아야 하기 때문입니다.
+
+그래서 학습 중에는 activation 저장량이 VRAM 사용량에 큰 영향을 줍니다.
+
+학습 VRAM 사용량 =
+weight 저장
++ activation 저장
++ gradient 저장
++ optimizer state 저장
+
+반면 추론에서는 보통 gradient와 optimizer state가 필요 없기 때문에 학습보다 VRAM 사용량이 적습니다.
+
+
+---
+
+
+### 12. VRAM 관점에서의 관계
+
+GPU 메모리, 즉 VRAM에는 주로 다음이 올라갑니다.
+
+| 항목 | 학습 시 | 추론 시 |
+|---|---|---|
+| Weight | 필요 | 필요 |
+| Activation | 많이 필요 | 필요하지만 상대적으로 적음 |
+| Gradient | 필요 | 불필요 |
+| Optimizer state | 필요 | 불필요 |
+| Input batch | 필요 | 필요 |
+
+그래서 같은 모델이라도 학습은 추론보다 훨씬 많은 VRAM이 필요합니다.
+
+특히 batch size가 커지면 activation이 커지므로 VRAM 사용량이 증가합니다.
+
+
+---
+
+
+### 13. 한눈에 보는 관계
+
+```mermaid
+flowchart TD
+    A[Input Batch] --> B[Input Activation]
+    B --> C[Layer Weight]
+    C --> D[Linear Calculation]
+    B --> D
+    D --> E[Output Activation]
+    E --> F[Next Layer]
+    F --> G[Prediction]
+    G --> H[Loss]
+    H --> I[Gradient]
+    I --> J[Update Weight]
+```
+
+추론에서는 보통 아래까지만 갑니다.
+
+Input Batch → Activation 계산 → Prediction
+
+학습에서는 여기에 추가로 다음 과정이 붙습니다.
+
+Loss 계산 → Gradient 계산 → Weight 업데이트
+
+
+---
+
+
+### 14. 아주 짧은 비유
+
+#### Weight
+
+모델이 학습해서 갖게 된 레시피
+
+#### Activation
+
+그 레시피를 실제 재료에 적용했을 때 나오는 중간 요리 상태
+
+#### Batch
+
+한 번에 요리하는 주문 묶음
+
+예를 들어 레시피는 동일합니다.
+하지만 주문이 김치볶음밥 1개인지, 32개인지에 따라 중간 조리량은 달라집니다.
+
+같은 weight를 사용하지만,
+batch가 커지면 activation도 커진다.
+
+
+---
+
+
+### 15. 최종 정리
+
+| 개념 | 정의 | 변하는가? | 어디에 저장되는가? |
+|---|---|---|---|
+| Weight | 학습된 모델 파라미터 | 학습 중 변함, 추론 중 고정 | 모델 파일, GPU VRAM |
+| Activation | 각 layer의 중간 계산 결과 | 입력마다 달라짐 | 실행 중 GPU VRAM |
+| Batch | 한 번에 처리하는 입력 묶음 | 사용자가 설정 | 입력 데이터 형태 |
+
+가장 중요한 관계는 이것입니다.
+
+Activation = Input Batch가 Weight를 통과하며 만들어지는 중간 결과
+
+그리고 한 layer의 핵심 계산은 다음과 같습니다.
+
+Input Activation × Weight + Bias = Output Activation
+
+즉:
+
+Weight는 모델이 배운 지식이고,
+Batch는 한 번에 넣는 데이터 묶음이며,
+Activation은 그 batch가 weight를 통과하면서 만들어지는 계산 결과입니다.
+
+---
+
 [트랙 목차](./README.md) · [다음: Operating System, Server, and Web Communication](./02-operating-system-server-and-web.md)
